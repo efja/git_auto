@@ -4,7 +4,7 @@
     :propósito  : Montar un script para automatizar a descarga de información dun conxunto de repositorios de GIT coa
     información almacenada nun ficheiro JSON
     
-    :version    : v0.0.1
+    :version    : v0.0.2
 
 """
 
@@ -127,25 +127,27 @@ class Repo():
     Empregase para configurar o nome de usuario e o email para notificar os commits.
     
     Atributos:
-        (str) nome          : descripción do repo
-        (str) rama          : do repo que coa que se quere automatizar
-        (str) remoto        : nome do repo remoto
-        (str) uri           : URI do repo remoto
-        (str) directorio    : directorio onde se está o repo
-        (bool) submodulos   : Indica se ten submóludos configurados, empregase só no clonado. Se é contén submóludos e ó
-                            mesmo tempo é un submódulo de outro repo configurado recomendase poñer a False
+        (str) nome              : descripción do repo
+        (str) rama              : do repo que coa que se quere automatizar
+        (str) remoto            : nome do repo remoto
+        (str) uri               : URI do repo remoto
+        (str) directorio        : directorio onde se está o repo
+        (bool) ten_submodulos   : Indica se ten submóludos configurados, empregase só no clonado. Se é contén submóludos e ó
+                                mesmo tempo é un submódulo de outro repo configurado recomendase poñer a False
+        (bool) e_submodulo      : Indica se o repo é un submóludo e se debe tratar como tal
 
     """
     # ------------------------------------------------------------------------------------------------------------------
     # CONTRUCTOR
     # ------------------------------------------------------------------------------------------------------------------
-    def __init__(self, nome, rama, remoto, uri, directorio, submodulos = False):
+    def __init__(self, nome, rama, remoto, uri, directorio, ten_submodulos = False, e_submodulo = False):
         self.__nome = nome
         self.__rama = rama
         self.__remoto = remoto
         self.__uri = uri
         self.__directorio = directorio
-        self.__submodulos = submodulos
+        self.__ten_submodulos = ten_submodulos
+        self.__e_submodulo = e_submodulo
         
     # ------------------------------------------------------------------------------------------------------------------
     # GETTERS + SETTERS
@@ -191,39 +193,47 @@ class Repo():
         self.__directorio = directorio
 
     @property
-    def submodulos(self):
-        return self.__submodulos
+    def ten_submodulos(self):
+        return self.__ten_submodulos
 
-    @submodulos.setter
-    def submodulos(self, submodulos):
-        self.__submodulos = submodulos
+    @ten_submodulos.setter
+    def ten_submodulos(self, ten_submodulos):
+        self.__ten_submodulos = ten_submodulos
+
+    @property
+    def e_submodulo(self):
+        return self.__e_submodulo
+
+    @e_submodulo.setter
+    def e_submodulo(self, e_submodulo):
+        self.__e_submodulo = e_submodulo
         
     # ------------------------------------------------------------------------------------------------------------------
     # MÉTODOS
     # ------------------------------------------------------------------------------------------------------------------
     def clone(self):
-        """Executa o parámetro 'config'.
+        """Executa o parámetro 'clone'.
         
         Executa:
-            git config [--global] user.user <nome>
-            git config [--global] user.email <email>
-        
-        Argumentos:
-            (bool) config_global: determina se se debe aplicar a configuración de xeito global (True) ou por repo (False)
-
+            git cloen [--recurse-submodules] <uri> <directorio>
+            
         """
         submodule_str = ""
         
-        # Se ten submodulos descarganse os recursos
-        if (self.submodulos):
-            submodule_str = "--recurse-submodules"
-        
-        comando_str = "git clone -b {} {} {} {}".format(self.rama, submodule_str, self.uri, self.dir)
-                
-        os.system(comando_str)
-        
-        # Cambia ó directorio do repo
-        os.chdir(self.directorio)
+        if (not self.e_submodulo):
+            # Se ten ten_submodulos descarganse os recursos
+            if (self.ten_submodulos):
+                submodule_str = "--recurse-submodules"
+            
+            comando_str = "git clone -b {} {} {} {}".format(self.rama, submodule_str, self.uri, self.directorio)
+            
+            # Para volver o directorio actual
+            dir_actual = os.getcwd()
+            
+            os.system(comando_str)
+            
+            # Cambia ó directorio do repo
+            os.chdir(dir_actual)
 
     def comando_git(self, operacion, remoto = False, rama = False):
         """Executa unha opeación de git.
@@ -243,15 +253,16 @@ class Repo():
             rama_str = self.rama
             
         comando_str = "git {} {} {}".format(operacion, remoto_str, rama_str)
-        
+    
         # Para volver o directorio actual
         dir_actual = os.getcwd()
         
         # Cambia ó directorio do repo
         os.chdir(self.directorio)
         
-        # Volve ó directorio actual
         os.system(comando_str)
+        
+        # Volve ó directorio actual
         os.chdir(dir_actual)
         
     def status(self):
@@ -289,7 +300,7 @@ class Repo():
         dir_actual = os.getcwd()
         
         print(SEPARADOR1)
-        print(TITULO.format(self.directorio, self.rama))
+        print(TITULO.format(self.nome, self.rama))
         print(SEPARADOR_TITULO)
         print(SUBTITULO.format(dir_actual))
         print(SEPARADOR1)
@@ -311,6 +322,7 @@ class Repo():
         saida += "URI\t\t: {}\n"
         saida += "Directorio\t: {}\n"
         saida += "Ten submodulos\t: {}"
+        saida += "É submodulo\t: {}"
         
         return saida.format(
             self.nome,
@@ -318,7 +330,8 @@ class Repo():
             self.remoto,
             self.uri,
             self.directorio,
-            self.submodulos
+            self.ten_submodulos,
+            self.e_submodulo
         )
 
 ### Repo
@@ -378,6 +391,14 @@ class Datos():
     def config(self):
         """Imprime a información do usuario."""
         self.usuario.config_usuario()
+        
+    def clone(self):
+        """Executa 'git clone' e despois 'git checkout' de cada Repo."""
+        for repo in self.repos:
+            print()
+            repo.clone()
+            
+        self.checkout()
         
     def fetch(self):
         """Executa 'git fetch' de cada Repo."""
@@ -450,7 +471,8 @@ class Datos():
                                 aux["remoto"],
                                 aux["uri"],
                                 aux["directorio"],
-                                aux["submodulos"]
+                                aux["ten_submodulos"],
+                                aux["e_submodulo"]
                             )
                     self.add_repo(repo)
 
@@ -477,6 +499,7 @@ def main(argv):
     parser = argparse.ArgumentParser(description="Sen argumentos é equivalente a pasarlle o parámetro [-p]")
     
     # Argumentos
+    parser.add_argument("--clone", help="Clona os repos nos directorios asigandos e cambia a rama á definida", action="store_true")
     parser.add_argument("-c", "--config", help="Aplica a configuración de git: <user.name> e <user.email>", action="store_true")
     parser.add_argument("-f", "--fetch", help="Fai un fetch en tódolos repos", action="store_true")
     parser.add_argument("-p", "--pull", help="Fai un pull en tódolos repos", action="store_true")
@@ -489,6 +512,8 @@ def main(argv):
 
     if args.config:
         datos.config()
+    elif args.clone:
+        datos.clone()
     elif args.fetch:
         datos.fetch()
     elif args.pull:

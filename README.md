@@ -12,12 +12,13 @@ Script en Python para automatizar a descarga de información dun conxunto de rep
     },
     "repos" : [
         {
-            "nome"          : "git_auto.py",
-            "rama"          : "main",
-            "remoto"        : "origin",
-            "uri"           : "git@github.com:efja/git_auto.git",
-            "directorio"    : ".",
-            "submodulos"    : false
+            "nome"              : "git_auto.py",
+            "rama"              : "main",
+            "remoto"            : "origin",
+            "uri"               : "git@github.com:efja/git_auto.git",
+            "directorio"        : ".",
+            "ten_submodulos"    : false,
+            "e_submodulo"       : false
         }
     ]
 }
