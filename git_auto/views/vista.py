@@ -34,18 +34,33 @@ TITULO = SEPARADOR_TITULO + COR_RESALTADO + COR_TITULO + " {}" + COR_TITULO2 + "
 OPERACION = SEPARADOR_TITULO + COR_RESALTADO + COR_OPERACION + " {}" + COR_NORMAL
 SUBTITULO = SEPARADOR_TITULO + COR_SUBTITULO + " {}" + COR_NORMAL
 
-def imprimir_resultados(resultados):
-    for resultado in resultados:
-        obxecto = resultado["obxecto"]
+def imprimir_datos(datos):
+    for dato in datos:
+        if type(dato) is list:
+            for resultado in dato:
+                imprimir_resultados(resultado)
+        else:
+            imprimir_resultados(dato)
+
+def imprimir_resultados(resultado):
+    saida = resultado["saida"]
+
+    if resultado["obxecto"] is not None:
+        nome = resultado["obxecto"].nome
+        rama = resultado["obxecto"].rama
+        directorio = resultado["obxecto"].directorio
+
         operacion = resultado["operacion"]
 
         print(SEPARADOR1)
         print(OPERACION.format(operacion))
-        print(TITULO.format(obxecto.nome, obxecto.rama, operacion))
+        print(TITULO.format(nome, rama, operacion))
         print(SEPARADOR_TITULO)
-        print(SUBTITULO.format(obxecto.directorio))
+        print(SUBTITULO.format(directorio))
         print(SEPARADOR1)
         print()
-        print(resultado["saida"])
+        print(saida)
         print(SEPARADOR2)
         print()
+    else:
+        print(saida)

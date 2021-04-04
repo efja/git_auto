@@ -8,6 +8,7 @@ import argparse
 
 # Modelo
 from models.Datos import *
+from models.Repo import *
 from views.vista import *
 
 ########################################################################################################################
@@ -52,7 +53,13 @@ def main(argv):
     elif args.status:
         resultados = datos.status()
     elif args.info:
-            resultados.append({"saida": str(datos)})
+            resultados.append(
+                {
+                    "saida": str(datos),
+                    "operacion": "info",
+                    "obxecto": None
+                }
+            )
     else:
         if (len(unknown) > 0):
             if (len(unknown) > 1):
@@ -62,4 +69,4 @@ def main(argv):
         else:
             resultados = datos.pull()
 
-    imprimir_resultados(resultados)
+    imprimir_datos(resultados)
