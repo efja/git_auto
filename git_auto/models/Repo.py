@@ -1,7 +1,8 @@
 ########################################################################################################################
 # Librerías importadas
 ########################################################################################################################
-import os
+# Modelo
+from models.GitExec import *
 
 ########################################################################################################################
 # Repo
@@ -125,13 +126,10 @@ class Repo():
 
             comando_str = "git clone -b {} {} {} {}".format(self.rama, submodule_str, self.uri, self.directorio)
 
-            # Para volver o directorio actual
-            dir_actual = os.getcwd()
+            resultado = exec_command(comando_str)
 
-            os.system(comando_str)
-
-            # Cambia ó directorio do repo
-            os.chdir(dir_actual)
+            resultado["operacion"] = "clone"
+            resultado["obxecto"] = self
 
     def comando_git(self, operacion, remoto = False, rama = False):
         """Executa unha opeación de git.
@@ -152,54 +150,61 @@ class Repo():
 
         comando_str = "git {} {} {}".format(operacion, remoto_str, rama_str)
 
-        # Para volver o directorio actual
-        dir_actual = os.getcwd()
+        resultado = exec_command(comando_str, self.directorio)
+        resultado["operacion"] = operacion
+        resultado["obxecto"] = self
 
-        # Cambia ó directorio do repo
-        os.chdir(self.directorio)
-
-        os.system(comando_str)
-
-        # Volve ó directorio actual
-        os.chdir(dir_actual)
+        return resultado
 
     def status(self):
         """Executa 'git status' a través de 'self.comando_git()'."""
 
-        self.comando_git("status")
+        return self.comando_git("status")
 
     def checkout(self):
         """Executa 'git checkout' a través de 'self.comando_git()'."""
 
-        self.comando_git("checkout", rama=True)
+        return self.comando_git("checkout", rama=True)
 
     def fetch(self):
         """Executa 'git fetch' a través de 'self.comando_git()'."""
+        resultado = []
 
-        self.checkout()
-        self.comando_git("fetch", remoto=True)
+        resultado.append(self.checkout())
+        resultado.append(self.comando_git("fetch", remoto=True))
+
+        return resultado
 
     def pull(self):
         """Executa 'git pull' a través de 'self.comando_git()'."""
+        resultado = []
 
-        self.checkout()
-        self.comando_git("pull", remoto=True, rama=True)
+        resultado.append(self.checkout())
+        resultado.append(self.comando_git("pull", remoto=True, rama=True))
+
+        return resultado
 
     def set_remotes(self):
         """Executa 'git remote add' coa lista de obxectos da clase 'remote' a través de 'self.comando_git()'."""
+        resultado = []
 
-        self.checkout()
+        resultado.append(self.checkout())
 
         for remote in self.remotes:
-            self.comando_git(remote.get_remote_add, remoto=False, rama=False)
+            resultado.append(self.comando_git(remote.get_remote_add, remoto=False, rama=False))
+
+        return resultado
 
     def add_remote(self, remote):
         """Engade un remoto á lista de remotos e executa 'git remote add' para este remoto."""
+        resultado = []
 
-        self.checkout()
+        resultado.append(self.checkout())
 
-        self.remotes.push(remote)
-        self.comando_git(remote.get_remote_add, remoto=False, rama=False)
+        resultado.append(self.remotes.push(remote))
+        resultado.append(self.comando_git(remote.get_remote_add, remoto=False, rama=False))
+
+        return resultado
 
     # ------------------------------------------------------------------------------------------------------------------
     # MÉTODOS SOBREESCRITOS

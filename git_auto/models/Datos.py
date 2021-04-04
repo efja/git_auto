@@ -64,40 +64,55 @@ class Datos():
         self.repos.append(repo)
 
     def config(self):
-        """Imprime a información do usuario."""
+        """Configura a información do usuario no repo."""
+
         self.usuario.config_usuario()
 
     def clone(self):
         """Executa 'git clone' e despois 'git checkout' de cada Repo."""
-        for repo in self.repos:
-            print()
-            repo.clone()
+        resultado = []
 
-        self.checkout()
+        for repo in self.repos:
+            resultado.append(repo.clone())
+            resultado.append(repo.checkout())
+
+        return resultado
 
     def fetch(self):
         """Executa 'git fetch' de cada Repo."""
+        resultado = []
+
         for repo in self.repos:
-            print()
-            repo.fetch()
+            resultado.append(repo.fetch())
+
+        return resultado
 
     def pull(self):
         """Executa 'git pull' de cada Repo."""
+        resultado = []
+
         for repo in self.repos:
-            print()
-            repo.pull()
+            resultado.append(repo.pull())
+
+        return resultado
 
     def checkout(self):
         """Executa 'git checkout' de cada Repo."""
+        resultado = []
+
         for repo in self.repos:
-            print()
-            repo.checkout()
+            resultado.append(repo.checkout())
+
+        return resultado
 
     def status(self):
         """Executa 'git status' de cada Repo."""
+        resultado = []
+
         for repo in self.repos:
-            print()
-            repo.status()
+            resultado.append(repo.status())
+
+        return resultado
 
     def __repos_str(self):
         """Recolle o str de cada repo para imprimir o resultado."""
