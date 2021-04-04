@@ -168,18 +168,15 @@ class Repo():
 
     def fetch(self):
         """Executa 'git fetch' a través de 'self.comando_git()'."""
-        resultado = []
 
-        resultado.append(self.checkout())
-        resultado.append(self.comando_git("fetch", remoto=True))
-
-        return resultado
+        self.checkout()
+        return self.comando_git("fetch", remoto=True)
 
     def pull(self):
         """Executa 'git pull' a través de 'self.comando_git()'."""
         resultado = []
 
-        resultado.append(self.checkout())
+        self.checkout()
         resultado.append(self.comando_git("pull", remoto=True, rama=True))
 
         return resultado
@@ -188,7 +185,7 @@ class Repo():
         """Executa 'git remote add' coa lista de obxectos da clase 'remote' a través de 'self.comando_git()'."""
         resultado = []
 
-        resultado.append(self.checkout())
+        self.checkout()
 
         for remote in self.remotes:
             resultado.append(self.comando_git(remote.get_remote_add, remoto=False, rama=False))
@@ -199,12 +196,10 @@ class Repo():
         """Engade un remoto á lista de remotos e executa 'git remote add' para este remoto."""
         resultado = []
 
-        resultado.append(self.checkout())
+        self.checkout()
 
-        resultado.append(self.remotes.push(remote))
-        resultado.append(self.comando_git(remote.get_remote_add, remoto=False, rama=False))
-
-        return resultado
+        self.remotes.push(remote)
+        return self.comando_git(remote.get_remote_add, remoto=False, rama=False)
 
     # ------------------------------------------------------------------------------------------------------------------
     # MÉTODOS SOBREESCRITOS
