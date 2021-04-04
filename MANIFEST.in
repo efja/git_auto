@@ -1,0 +1,8 @@
+"""git_auto
+    :autor      : Fco. Javier González Campos
+    :propósito  : Montar un script para automatizar a descarga de información dun conxunto de repositorios de GIT coa
+    información almacenada nun ficheiro JSON
+
+    :version    : v0.0.2
+
+"""
