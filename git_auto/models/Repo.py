@@ -126,7 +126,10 @@ class Repo():
 
             comando_str = "git clone -b {} {} {} {}".format(self.rama, submodule_str, self.uri, self.directorio)
 
-            return exec_command(comando_str)
+            resultado = exec_command(comando_str)
+
+            resultado["operacion"] = "clone"
+            resultado["obxecto"] = self
 
     def comando_git(self, operacion, remoto = False, rama = False):
         """Executa unha opeación de git.
@@ -147,7 +150,11 @@ class Repo():
 
         comando_str = "git {} {} {}".format(operacion, remoto_str, rama_str)
 
-        return exec_command(comando_str, self.directorio)
+        resultado = exec_command(comando_str, self.directorio)
+        resultado["operacion"] = operacion
+        resultado["obxecto"] = self
+
+        return resultado
 
     def status(self):
         """Executa 'git status' a través de 'self.comando_git()'."""

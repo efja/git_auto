@@ -64,7 +64,7 @@ class Datos():
         self.repos.append(repo)
 
     def config(self):
-        """Imprime a información do usuario."""
+        """Configura a información do usuario no repo."""
 
         self.usuario.config_usuario()
 
@@ -74,8 +74,7 @@ class Datos():
 
         for repo in self.repos:
             resultado.append(repo.clone())
-
-        resultado.append(self.checkout())
+            resultado.append(repo.checkout())
 
         return resultado
 

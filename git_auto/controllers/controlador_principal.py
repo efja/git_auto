@@ -7,7 +7,8 @@
 import argparse
 
 # Modelo
-import models.Datos as Datos
+from models.Datos import *
+from views.vista import *
 
 ########################################################################################################################
 # CONSTANTES
@@ -51,7 +52,7 @@ def main(argv):
     elif args.status:
         resultados = datos.status()
     elif args.info:
-        resultados.append({"saida", datos})
+            resultados.append({"saida": str(datos)})
     else:
         if (len(unknown) > 0):
             if (len(unknown) > 1):
@@ -61,6 +62,4 @@ def main(argv):
         else:
             resultados = datos.pull()
 
-    for resultado in resultados:
-        print(resultado["saida"])
-
+    imprimir_resultados(resultados)
