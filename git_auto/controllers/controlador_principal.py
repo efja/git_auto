@@ -41,7 +41,14 @@ def main(argv):
     # Accións dos argumenteos
 
     if args.config:
-        resultados = datos.config()
+        datos.config()
+        resultados.append(
+            {
+                "saida": "Aplicada configuración:\n{}\n".format(str(datos.usuario)),
+                "operacion": "config",
+                "obxecto": None
+            }
+        )
     elif args.clone:
         resultados = datos.clone()
     elif args.fetch:
@@ -53,13 +60,13 @@ def main(argv):
     elif args.status:
         resultados = datos.status()
     elif args.info:
-            resultados.append(
-                {
-                    "saida": str(datos),
-                    "operacion": "info",
-                    "obxecto": None
-                }
-            )
+        resultados.append(
+            {
+                "saida": str(datos),
+                "operacion": "info",
+                "obxecto": None
+            }
+        )
     else:
         if (len(unknown) > 0):
             if (len(unknown) > 1):
