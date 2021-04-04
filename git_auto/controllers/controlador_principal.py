@@ -20,6 +20,7 @@ _FICHEIRO_REPOS = 'data/repos.json'
 def main(argv):
     datos= Datos(_FICHEIRO_REPOS)
     datos.cargar_datos()
+    resultados =  []
 
     msgError = "Non se recoñece{} o{} parámetro{}: "
 
@@ -38,19 +39,19 @@ def main(argv):
     # Accións dos argumenteos
 
     if args.config:
-        datos.config()
+        resultados = datos.config()
     elif args.clone:
-        datos.clone()
+        resultados = datos.clone()
     elif args.fetch:
-        datos.fetch()
+        resultados = datos.fetch()
     elif args.pull:
-        datos.pull()
+        resultados = datos.pull()
     elif args.rama:
-        datos.checkout()
+        resultados = datos.checkout()
     elif args.status:
-        datos.status()
+        resultados = datos.status()
     elif args.info:
-        print(datos)
+        resultados.append({"saida", datos})
     else:
         if (len(unknown) > 0):
             if (len(unknown) > 1):
@@ -58,4 +59,8 @@ def main(argv):
 
             parser.error(msgError.format("", "", "") + str(unknown))
         else:
-            datos.pull()
+            resultados = datos.pull()
+
+    for resultado in resultados:
+        print(resultado["saida"])
+
